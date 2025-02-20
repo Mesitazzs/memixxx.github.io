@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Cómics y Manga</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #1f1f1f;
+      padding: 20px;
+      position: relative;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 18px;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #f39c12;
+    }
+    /* Botón de Login en la esquina superior derecha */
+    .login-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background-color: #f39c12;
+      color: #121212;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 3px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .login-btn:hover {
+      background-color: #d35400;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    /* Secciones */
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    /* Últimas Actualizaciones */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background-color: #1f1f1f;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .card img {
+      width: 100%;
+      display: block;
+    }
+    .card-content {
+      padding: 10px;
+    }
+    .card-title {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .card-chapter {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #f39c12;
+    }
+    .card-description {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+    .card-categories {
+      margin-bottom: 10px;
+    }
+    .card-categories span {
+      background-color: #f39c12;
+      color: #121212;
+      padding: 3px 8px;
+      margin-right: 5px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #f39c12;
+      color: #121212;
+      padding: 8px 15px;
+      text-decoration: none;
+      border-radius: 3px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #d35400;
+    }
+    /* Subir Manga */
+    .form-container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #1f1f1f;
+      border-radius: 5px;
+    }
+    .form-container h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      background-color: #2a2a2a;
+      border: 1px solid #333;
+      border-radius: 3px;
+      color: #fff;
+    }
+    input[type="file"] {
+      padding: 10px;
+      background-color: #2a2a2a;
+      border: 1px solid #333;
+      border-radius: 3px;
+      color: #fff;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    button[type="submit"] {
+      background-color: #f39c12;
+      color: #121212;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button[type="submit"]:hover {
+      background-color: #d35400;
+    }
+    /* Reading */
+    #reading main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    .manga-banner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    .manga-banner img.cover {
+      width: 300px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+    .manga-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .manga-info h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .details span {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .manga-actions {
+      margin-top: 20px;
+    }
+    .manga-actions a.leer-btn {
+      background-color: #f39c12;
+      color: #121212;
+      padding: 8px 15px;
+      text-decoration: none;
+      border-radius: 3px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .manga-actions a.leer-btn:hover {
+      background-color: #d35400;
+    }
+    .manga-description {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
+    .manga-description h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .manga-description p {
+      font-size: 16px;
+      text-align: justify;
+    }
+    .chapter-list {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
+    .chapter-list h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    .chapter-list ul {
+      list-style: none;
+    }
+    .chapter-list li {
+      margin-bottom: 10px;
+    }
+    .chapter-list a {
+      color: #f39c12;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .chapter-list a:hover {
+      color: #d35400;
+    }
+    .back-btn {
+      background-color: #f39c12;
+      color: #121212;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 3px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 20px;
+    }
+    .back-btn:hover {
+      background-color: #d35400;
+    }
+    footer {
+      background-color: #1f1f1f;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+    /* Centrado de imágenes en el capítulo */
+    .chapter-images {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      .manga-banner {
+        flex-direction: column;
+        align-items: center;
+      }
+      .manga-banner img.cover {
+        width: 100%;
+        max-width: 300px;
+      }
+      .manga-info {
+        width: 100%;
+      }
+    }
+    /* Estilos para la sección de login */
+    .login-container {
+      max-width: 400px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      color: #000;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .login-container label {
+      font-size: 1.1em;
+      margin-top: 10px;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 4px;
+      margin: 10px 0;
+      border: 2px solid #ffffff;
+      border-radius: 1px;
+    }
+    .login-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #000000;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+    .login-container button:hover {
+      background-color: #000000;
+    }
+    .login-container .response {
+      background-color: #ffffff;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 4px;
+      display: none;
+    }
+    .login-container .register-container {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="#" onclick="showSection('inicio')">Home</a>
+      <a href="#">Mangas</a>
+      <a href="#">Favoritos</a>
+      <a href="https://discord.gg/MTeuappHQA" target="_blank">Discord</a>
+    </nav>
+    <!-- Botón de Login en la esquina superior derecha -->
+    <button class="login-btn" onclick="showSection('login')">Login</button>
+  </header>
+  
+  <div class="container">
+    <!-- Sección de Login -->
+    <div id="login" class="section">
+      <div class="login-container">
+        <h2>Iniciar sesión</h2>
+        <form id="login-form">
+          <label for="username">Correo Electrónico</label>
+          <input type="text" id="username" name="username" required>
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" required>
+          <button type="submit">Iniciar sesión</button>
+        </form>
+        <p>¿No tienes cuenta? <button id="registerBtn">Registrarse</button></p>
+        <div class="response" id="response">
+          <p><strong>¡Bienvenido!</strong></p>
+        </div>
+        <div class="register-container" id="register-container">
+          <h2>Registrarse</h2>
+          <form id="register-form">
+            <label for="new-username">Correo Electrónico</label>
+            <input type="text" id="new-username" name="new-username" required>
+            <label for="new-password">Contraseña</label>
+            <input type="password" id="new-password" name="new-password" required>
+            <button type="submit">Registrar</button>
+          </form>
+          <p>¿Ya tienes cuenta? <button id="loginBtn">Iniciar sesión</button></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sección "Últimas Actualizaciones" -->
+    <div id="inicio" class="section active">
+      <h1>Últimas Actualizaciones</h1>
+      <div class="grid">
+        <!-- Tarjeta 1 -->
+        <div class="card">
+          <img src="https://cdn.discordapp.com/attachments/1210799643970117644/1341592629963653193/2024-10-29-01-32-43-1730208763944.jpg?ex=67b68f00&is=67b53d80&hm=cdd45bca52d24937ca12b7be102e5a62a19d87c186afb3339ccb987238b96535" alt="Comic Thumbnail">
+          <div class="card-content">
+            <div class="card-title">Superhéroe De Tipo Crecimiento</div>
+            <div class="card-chapter">Capítulo: 1</div>
+            <p class="card-description"></p>
+            <div class="card-categories">
+              <span>Acción</span>
+              <span>Demonios</span>
+              <span>Manwha</span>
+              <span>Vida Escolar</span>
+            </div>
+            <a href="#" class="btn start-reading" 
+               data-id="1"
+               data-title="Superhéroe De Tipo Crecimiento" 
+               data-image="https://cdn.discordapp.com/attachments/1210799643970117644/1341592629963653193/2024-10-29-01-32-43-1730208763944.jpg?ex=67b68f00&is=67b53d80&hm=cdd45bca52d24937ca12b7be102e5a62a19d87c186afb3339ccb987238b96535" 
+               data-categories="Acción, Demonios, Manwha, Vida Escolar"
+               data-description="En una era convulsa, la humanidad se ve obligada a responder con armas conocidas como “Reliquias Sagradas” que encarnan sus propias almas para combatir a los monstruos que surgen de otro mundo. Asahi Hinata, un joven con un futuro prometedor como hijo de un héroe, está a punto de asistir a la ceremonia de ingreso a la Academia Nacional de Valquirias. Sin embargo, la Reliquia Sagrada que recibe es un traje de héroe que parece sacado directamente de un programa de héroes infantiles de bajo presupuesto… Viviendo día a día como un paria en la academia, Hinata persevera a pesar de que quienes lo rodean lo ignoran. Pero un día, el coraje y la determinación de Hinata despiertan un poder único dentro de su traje de héroe…"
+               data-chapter-count="1">
+              Start Reading
+            </a>
+          </div>
+        </div>
+        <!-- Tarjeta 2 -->
+        <div class="card">
+          <img src="https://cdn.discordapp.com/attachments/1210799643970117644/1341592954627817594/feng-zhi-chu-gui.png?ex=67b68f4d&is=67b53dcd&hm=07744c3024ea4ef77cde66bf4fde1b1a4d9750423d215ea65ea6dd2ddd4def6c" alt="Decreto Imperial: Hacer Trampa A Voluntad">
+          <div class="card-content">
+            <div class="card-title">Decreto Imperial: Hacer Trampa A Voluntad</div>
+            <div class="card-chapter">Capítulo: 2</div>
+            <p class="card-description"></p>
+            <div class="card-categories">
+              <span>Acción</span>
+              <span>Comedia</span>
+              <span>Drama</span>
+              <span>Fantasía</span>
+              <span>Harén</span>
+              <span>Romance</span>
+            </div>
+            <a href="#" class="btn start-reading" 
+               data-id="2"
+               data-title="Decreto Imperial: Hacer Trampa A Voluntad" 
+               data-image="https://cdn.discordapp.com/attachments/1210799643970117644/1341592954627817594/feng-zhi-chu-gui.png?ex=67b68f4d&is=67b53dcd&hm=07744c3024ea4ef77cde66bf4fde1b1a4d9750423d215ea65ea6dd2ddd4def6c" 
+               data-categories="Acción, Artes Marciales, Aventura, Comedia"
+               data-description="Wen Ming transmigra inesperadamente a un mundo de alta marcialidad y se encuentra comprometido con la poderosa Emperatriz, Wu Xin. Con la esperanza de aprovechar esta conexión para tener una vida cómoda, planea confiar en ella y evitar las dificultades. Sin embargo, su sueño de una vida fácil se hace añicos rápidamente después de que, sin querer, enfada a Wu Xin. Insegura sobre sus propios sentimientos hacia él, Wu Xin idea una prueba: envía a su amiga íntima, Tao Sisi, para seducir a Wen Ming. Esto no solo sirve como prueba de su lealtad, sino que también la ayuda a evaluar si se sentiría celosa. Mientras Wen Ming navega por esta situación inusual, cuestiona la efectividad de tal prueba y se pregunta qué tipo de hombre realmente fallaría en una situación así."
+               data-chapter-count="2">
+              Start Reading
+            </a>
+          </div>
+        </div>
+        <!-- Tarjeta 3 -->
+        <div class="card">
+          <img src="https://cdn.discordapp.com/attachments/1210799643970117644/1341593600856952932/144d2e82-7bc5-4ec7-99d8-1b45b3d6ad34.png?ex=67b68fe8&is=67b53e68&hm=06b90629eeff7d6726459a61c964ee8da1e3d43cd547f67cb2f56ce7592d58c2" alt="Poder A Través De La Muerte">
+          <div class="card-content">
+            <div class="card-title">Poder A Través De La Muerte</div>
+            <div class="card-chapter">Capítulo: 3</div>
+            <p class="card-description"></p>
+            <div class="card-categories">
+              <span>Accion</span>
+              <span>Demonios</span>
+              <span>Fantasía</span>
+              <span>Webtoon</span>
+            </div>
+            <a href="#" class="btn start-reading" 
+               data-id="3"
+               data-title="Poder A Través De La Muerte" 
+               data-image="https://cdn.discordapp.com/attachments/1210799643970117644/1341593600856952932/144d2e82-7bc5-4ec7-99d8-1b45b3d6ad34.png?ex=67b68fe8&is=67b53e68&hm=06b90629eeff7d6726459a61c964ee8da1e3d43cd547f67cb2f56ce7592d58c2" 
+               data-categories="Acción, Aventura, Fantasía, Magia"
+               data-description="Hace cincuenta años, innumerables semillas Kaiki volaron desde el espacio. El mundo estableció líneas defensivas para contrarrestar a los monstruosos Kaiki, y la humanidad apenas logró sobrevivir. Pasó el tiempo, y ahora, Shinohami Ai, después de haber completado dos años de entrenamiento básico con las Fuerzas Humanas Unidas, se dirigía al frente con sus compañeros cuando fueron atacados por Kaiki. En este ataque, toda su unidad fue aniquilada. Abandonada por sus aliados y sin ningún equipo de rescate a la vista, se quedó sola en el otro extremo de la línea del frente, en territorio enemigo. Allí, descubrió a alguien al borde de la muerte por un ataque Kaiki y arriesgó su propia vida para salvarlo. Sin embargo, al que salvó, a costa de sufrir una herida fatal ella misma, fue Nosferatu, el rey de los monstruosos Kaiki. Para sobrevivir, Nosferatu se fusionó con el cuerpo de Ai. Así, nació un nuevo soldado con el poder de la inmortalidad, destinado a convertirse en un héroe, reviviendo más fuerte cada vez que muere."
+               data-chapter-count="3">
+              Start Reading
+            </a>
+          </div>
+        </div>
+        <!-- Tarjeta 4 -->
+        <div class="card">
+          <img src="https://images-ext-1.discordapp.net/external/mdsaBfzFVDz_dbZt3Iru5eujYFr9BLBaKE6VuPbOZws/https/mangadex.org/covers/8b56ac63-1573-4b79-b092-b6ae428a31f6/8d694c47-fc89-4965-b292-d79a0f9a1be4.jpg.512.jpg?format=webp&width=207&height=300" alt="La Vida Escolar Del Señor De La Tierra">
+          <div class="card-content">
+            <div class="card-title">La Vida Escolar Del Señor De La Tierra</div>
+            <div class="card-chapter">Capítulo: 8</div>
+            <p class="card-description"></p>
+            <div class="card-categories">
+              <span>Acción</span>
+              <span>Fantasía</span>
+              <span>School Life</span>
+              <span>Vida Escolar</span>
+            </div>
+            <a href="#" class="btn start-reading" 
+               data-id="4"
+               data-title="La Vida Escolar Del Señor De La Tierra" 
+               data-image="https://images-ext-1.discordapp.net/external/mdsaBfzFVDz_dbZt3Iru5eujYFr9BLBaKE6VuPbOZws/https/mangadex.org/covers/8b56ac63-1573-4b79-b092-b6ae428a31f6/8d694c47-fc89-4965-b292-d79a0f9a1be4.jpg.512.jpg?format=webp&width=207&height=300" 
+               data-categories="Acción, Apocalipsis, Aventura"
+               data-description="El ser más fuerte de la Tierra, siempre anhela una pelea que lo emocione. Enloquecido por su obsesión con las batallas, finalmente posee el cuerpo de un estudiante de secundaria para volver a disfrutar de la emoción del combate. ¿Podrá superar las dificultades en su nuevo cuerpo y seguir disfrutando de la alegría de la batalla?"
+               data-chapter-count="8">
+              Start Reading
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sección "Subir Manga" -->
+    <div id="subir" class="section">
+      <div class="form-container">
+        <h1>Subir el Manga</h1>
+        <form id="uploadForm" action="#" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="titulo">Título del Manga</label>
+            <input type="text" id="titulo" name="titulo" placeholder="Ingresa el título del manga" required>
+          </div>
+          <div class="form-group">
+            <label for="autor">Autor</label>
+            <input type="text" id="autor" name="autor" placeholder="Ingresa el nombre del autor" required>
+          </div>
+          <div class="form-group">
+            <label for="generos">Géneros</label>
+            <input type="text" id="generos" name="generos" placeholder="Ej: Acción, Comedia, Romance" required>
+          </div>
+          <div class="form-group">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado" required>
+              <option value="en_curso">En curso</option>
+              <option value="finalizado">Finalizado</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" placeholder="Escribe una breve descripción del manga" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="portada">Portada del Manga</label>
+            <input type="file" id="portada" name="portada" accept=".jpg, .jpeg, .png" required>
+          </div>
+          <div class="form-group">
+            <label for="banner">Banner del Manga</label>
+            <input type="file" id="banner" name="banner" accept=".jpg, .jpeg, .png">
+          </div>
+          <button type="submit" class="btn">Publicar Manga</button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Sección "Reading" -->
+    <div id="reading" class="section">
+      <main>
+        <section class="manga-banner">
+          <img id="reading-cover" class="cover" src="" alt="Portada del Manga">
+          <div class="manga-info">
+            <div>
+              <h1 id="reading-title"></h1>
+              <div class="details">
+                <span id="reading-author"><strong>Autor:</strong> Autor Updating</span>
+                <span id="reading-genres"><strong>Géneros:</strong> </span>
+                <span id="reading-status"><strong>Estado:</strong> En curso</span>
+              </div>
+            </div>
+            <div class="manga-actions">
+              <a href="#" class="leer-btn" onclick="showSection('reading'); return false;">Leer Manga</a>
+            </div>
+          </div>
+        </section>
+        <section class="manga-description">
+          <h2>Descripción</h2>
+          <p id="reading-description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+          </p>
+        </section>
+        <section class="chapter-list">
+          <h2>Lista de Capítulos</h2>
+          <ul id="reading-chapters">
+            <!-- Se llenará dinámicamente según el manga seleccionado -->
+          </ul>
+        </section>
+      </main>
+      <button class="back-btn" onclick="showSection('inicio')">Volver</button>
+    </div>
+    
+    <!-- Sección genérica para mostrar un capítulo -->
+    <div id="chapter" class="section">
+      <div class="container">
+        <h2 id="chapter-title">Capítulo</h2>
+        <div class="chapter-images" id="chapter-images">
+          <!-- Aquí se insertarán las imágenes del capítulo -->
+        </div>
+      </div>
+      <button class="back-btn" onclick="showSection('reading')">Volver</button>
+    </div>
+    
+  </div>
+  
+  <footer>
+    &copy; 2025 Mi Página de Cómics. Todos los derechos reservados.
+  </footer>
+  
+  <script>
+    // Función para mostrar secciones
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+    }
+    
+    // Objeto con datos de capítulos para cada manga (por título)
+    var chapterData = {
+      "Superhéroe De Tipo Crecimiento": {
+        1: ["ruta-imagen (1).jpg", "ruta-imagen (2).jpg", "ruta-imagen (3).jpg", "ruta-imagen (4).jpg", "ruta-imagen (5).jpg", "ruta-imagen (6).jpg", "ruta-imagen (7).jpg", "ruta-imagen (8).jpg", "ruta-imagen (9).jpg", "ruta-imagen (10).jpg", "ruta-imagen (11).jpg", "ruta-imagen (12).jpg", "ruta-imagen (13).jpg", "ruta-imagen (14).jpg", "ruta-imagen (15).jpg", "ruta-imagen (16).jpg", "ruta-imagen (17).jpg", "ruta-imagen (18).jpg", "ruta-imagen (19).jpg", "ruta-imagen (20).jpg", "ruta-imagen (21).jpg", "ruta-imagen (22).jpg", "ruta-imagen (23).jpg"]
+      },
+      "Decreto Imperial: Hacer Trampa A Voluntad": {
+        1: ["ruta-imagen (24).jpg", "ruta-imagen (25).jpg", "ruta-imagen (26).jpg", "ruta-imagen (27).jpg", "ruta-imagen (28).jpg", "ruta-imagen (29).jpg", "ruta-imagen (30).jpg", "ruta-imagen (31).jpg", "ruta-imagen (32).jpg", "ruta-imagen (33).jpg", "ruta-imagen (34).jpg", "ruta-imagen (35).jpg", "ruta-imagen (36).jpg", "ruta-imagen (37).jpg", "ruta-imagen (38).jpg", "ruta-imagen (39).jpg", "ruta-imagen (40).jpg", "ruta-imagen (41).jpg", "ruta-imagen (42).jpg", "ruta-imagen (43).jpg", "ruta-imagen (44).jpg", "ruta-imagen (45).jpg"],
+        2: ["ruta-imagen (46).jpg", "ruta-imagen (47).jpg", "ruta-imagen (48).jpg", "ruta-imagen (49).jpg", "ruta-imagen (50).jpg", "ruta-imagen (51).jpg", "ruta-imagen (52).jpg", "ruta-imagen (53).jpg", "ruta-imagen (54).jpg", "ruta-imagen (55).jpg", "ruta-imagen (56).jpg", "ruta-imagen (57).jpg", "ruta-imagen (58).jpg", "ruta-imagen (59).jpg", "ruta-imagen (60).jpg", "ruta-imagen (61).jpg", "ruta-imagen (62).jpg", "ruta-imagen (63).jpg", "ruta-imagen (64).jpg"]
+      },
+      "Poder A Través De La Muerte": {
+        1: ["ruta-imagen (65).jpg", "ruta-imagen (66).jpg", "ruta-imagen (67).jpg", "ruta-imagen (68).jpg", "ruta-imagen (69).jpg", "ruta-imagen (70).jpg", "ruta-imagen (71).jpg", "ruta-imagen (72).jpg", "ruta-imagen (73).jpg", "ruta-imagen (74).jpg", "ruta-imagen (75).jpg", "ruta-imagen (76).jpg", "ruta-imagen (77).jpg", "ruta-imagen (78).jpg", "ruta-imagen (79).jpg", "ruta-imagen (80).jpg", "ruta-imagen (81).jpg", "ruta-imagen (82).jpg", "ruta-imagen (83).jpg"],
+        2: ["ruta-imagen (84).jpg", "ruta-imagen (85).jpg", "ruta-imagen (86).jpg", "ruta-imagen (89).jpg", "ruta-imagen (90).jpg", "ruta-imagen (91).jpg", "ruta-imagen (92).jpg", "ruta-imagen (93).jpg", "ruta-imagen (94).jpg", "ruta-imagen (95).jpg", "ruta-imagen (96).jpg", "ruta-imagen (97).jpg", "ruta-imagen (98).jpg", "ruta-imagen (99).jpg", "ruta-imagen (100).jpg", "ruta-imagen (101).jpg"],
+        3: ["ruta-imagen (102).jpg", "ruta-imagen (103).jpg", "ruta-imagen (104).jpg", "ruta-imagen (105).jpg", "ruta-imagen (106).jpg", "ruta-imagen (107).jpg", "ruta-imagen (108).jpg", "ruta-imagen (109).jpg", "ruta-imagen (110).jpg", "ruta-imagen (111).jpg", "ruta-imagen (112).jpg", "ruta-imagen (113).jpg", "ruta-imagen (114).jpg", "ruta-imagen (115).jpg"]
+      },
+      "La Vida Escolar Del Señor De La Tierra": {
+        1: ["ruta-imagen (116).jpg", "ruta-imagen (117).jpg", "ruta-imagen (118).jpg", "ruta-imagen (119).jpg", "ruta-imagen (120).jpg", "ruta-imagen (121).jpg", "ruta-imagen (122).jpg", "ruta-imagen (123).jpg", "ruta-imagen (124).jpg", "ruta-imagen (125).jpg", "ruta-imagen (126).jpg", "ruta-imagen (127).jpg", "ruta-imagen (128).jpg", "ruta-imagen (129).jpg", "ruta-imagen (130).jpg"],
+        2: ["ruta-imagen (131).jpg", "ruta-imagen (132).jpg", "ruta-imagen (133).jpg", "ruta-imagen (134).jpg", "ruta-imagen (135).jpg", "ruta-imagen (136).jpg", "ruta-imagen (137).jpg", "ruta-imagen (138).jpg", "ruta-imagen (139).jpg", "ruta-imagen (140).jpg", "ruta-imagen (141).jpg", "ruta-imagen (142).jpg", "ruta-imagen (143).jpg", "ruta-imagen (144).jpg"],
+        3: ["ruta-imagen (145).jpg", "ruta-imagen (146).jpg", "ruta-imagen (147).jpg", "ruta-imagen (148).jpg", "ruta-imagen (149).jpg", "ruta-imagen (150).jpg", "ruta-imagen (151).jpg", "ruta-imagen (152).jpg", "ruta-imagen (153).jpg", "ruta-imagen (154).jpg", "ruta-imagen (155).jpg", "ruta-imagen (156).jpg", "ruta-imagen (157).jpg", "ruta-imagen (158).jpg", "ruta-imagen (159).jpg"],
+        4: ["ruta-imagen (160).jpg", "ruta-imagen (161).jpg", "ruta-imagen (162).jpg", "ruta-imagen (163).jpg", "ruta-imagen (164).jpg", "ruta-imagen (165).jpg", "ruta-imagen (166).jpg", "ruta-imagen (167).jpg", "ruta-imagen (168).jpg", "ruta-imagen (169).jpg", "ruta-imagen (170).jpg"],
+        5: ["ruta-imagen (171).jpg", "ruta-imagen (172).jpg", "ruta-imagen (173).jpg", "ruta-imagen (174).jpg", "ruta-imagen (175).jpg", "ruta-imagen (176).jpg", "ruta-imagen (177).jpg", "ruta-imagen (178).jpg", "ruta-imagen (179).jpg", "ruta-imagen (180).jpg", "ruta-imagen (181).jpg", "ruta-imagen (182).jpg"],
+        6: ["ruta-imagen (183).jpg", "ruta-imagen (184).jpg", "ruta-imagen (185).jpg", "ruta-imagen (186).jpg", "ruta-imagen (187).jpg", "ruta-imagen (188).jpg", "ruta-imagen (189).jpg", "ruta-imagen (190).jpg", "ruta-imagen (191).jpg", "ruta-imagen (192).jpg", "ruta-imagen (193).jpg", "ruta-imagen (194).jpg"],
+        7: ["ruta-imagen (195).jpg", "ruta-imagen (196).jpg", "ruta-imagen (197).jpg", "ruta-imagen (198).jpg", "ruta-imagen (199).jpg", "ruta-imagen (200).jpg", "ruta-imagen (201).jpg", "ruta-imagen (202).jpg", "ruta-imagen (203).jpg", "ruta-imagen (204).jpg", "ruta-imagen (205).jpg"],
+        8: ["ruta-imagen (206).jpg", "ruta-imagen (207).jpg", "ruta-imagen (208).jpg", "ruta-imagen (209).jpg", "ruta-imagen (210).jpg", "ruta-imagen (211).jpg", "ruta-imagen (212).jpg", "ruta-imagen (213).jpg", "ruta-imagen (214).jpg", "ruta-imagen (215).jpg", "ruta-imagen (216).jpg"]
+      }
+    };
+    
+    var currentMangaTitle = "";
+    
+    // Listener para botones "Start Reading" de las tarjetas
+    document.querySelectorAll('.start-reading').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        currentMangaTitle = this.dataset.title;
+        const image = this.dataset.image;
+        const categories = this.dataset.categories;
+        const description = this.dataset.description;
+        const chaptersForManga = chapterData[currentMangaTitle];
+        const chapterCount = chaptersForManga ? Object.keys(chaptersForManga).length : parseInt(this.dataset.chapterCount) || 1;
+        
+        document.getElementById('reading-title').textContent = currentMangaTitle;
+        document.getElementById('reading-cover').src = image;
+        document.getElementById('reading-genres').innerHTML = "<strong>Géneros:</strong> " + categories;
+        document.getElementById('reading-description').textContent = description;
+        
+        const chapterList = document.getElementById('reading-chapters');
+        let listHTML = '';
+        for(let i = 1; i <= chapterCount; i++){
+          listHTML += `<li><a href="#" class="chapter-link" data-chapter="${i}">Capítulo ${i}</a></li>`;
+        }
+        chapterList.innerHTML = listHTML;
+        
+        document.querySelectorAll('.chapter-link').forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const chapter = this.dataset.chapter;
+            loadChapter(chapter);
+          });
+        });
+        
+        showSection('reading');
+      });
+    });
+    
+    function loadChapter(chapterNumber) {
+      const images = chapterData[currentMangaTitle] && chapterData[currentMangaTitle][chapterNumber];
+      const chapterTitleElem = document.getElementById('chapter-title');
+      const chapterImagesElem = document.getElementById('chapter-images');
+      if(images) {
+        chapterTitleElem.textContent = "Capítulo " + chapterNumber + " de " + currentMangaTitle;
+        let imgsHTML = "";
+        images.forEach(src => {
+          imgsHTML += `<img src="${src}" alt="Página del Capítulo ${chapterNumber}">`;
+        });
+        chapterImagesElem.innerHTML = imgsHTML;
+      } else {
+        chapterTitleElem.textContent = "Capítulo no encontrado";
+        chapterImagesElem.innerHTML = "";
+      }
+      showSection('chapter');
+    }
+    
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      let titulo = document.getElementById('titulo').value;
+      let autor = document.getElementById('autor').value;
+      let generos = document.getElementById('generos').value;
+      let estado = document.getElementById('estado').value;
+      let descripcion = document.getElementById('descripcion').value;
+      let portadaInput = document.getElementById('portada');
+      let file = portadaInput.files[0];
+      
+      if(file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          let imageDataUrl = e.target.result;
+          let card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${imageDataUrl}" alt="${titulo}">
+            <div class="card-content">
+              <div class="card-title">${titulo}</div>
+              <div class="card-chapter">Capítulo: 1</div>
+              <p class="card-description">${descripcion}</p>
+              <div class="card-categories">
+                ${generos.split(',').map(g => `<span>${g.trim()}</span>`).join('')}
+              </div>
+              <a href="#" class="btn start-reading" 
+                 data-id="new"
+                 data-title="${titulo}" 
+                 data-image="${imageDataUrl}" 
+                 data-categories="${generos}"
+                 data-description="${descripcion}"
+                 data-chapter-count="1">
+                Start Reading
+              </a>
+            </div>
+          `;
+          document.querySelector('#inicio .grid').appendChild(card);
+          card.querySelector('.start-reading').addEventListener('click', function(e) {
+            e.preventDefault();
+            currentMangaTitle = this.dataset.title;
+            const image = this.dataset.image;
+            const categories = this.dataset.categories;
+            const description = this.dataset.description;
+            const chapterCount = parseInt(this.dataset.chapterCount) || 1;
+            document.getElementById('reading-title').textContent = currentMangaTitle;
+            document.getElementById('reading-cover').src = image;
+            document.getElementById('reading-genres').innerHTML = "<strong>Géneros:</strong> " + categories;
+            document.getElementById('reading-description').textContent = description;
+            
+            const chapterList = document.getElementById('reading-chapters');
+            let listHTML = '';
+            for(let i = 1; i <= chapterCount; i++){
+              listHTML += `<li><a href="#" class="chapter-link" data-chapter="${i}">Capítulo ${i}</a></li>`;
+            }
+            chapterList.innerHTML = listHTML;
+            document.querySelectorAll('.chapter-link').forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const chapter = this.dataset.chapter;
+                loadChapter(chapter);
+              });
+            });
+            showSection('reading');
+          });
+          document.getElementById('uploadForm').reset();
+          showSection('inicio');
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    document.querySelectorAll('.chapter-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const chapter = this.dataset.chapter;
+        loadChapter(chapter);
+      });
+    });
+    
+    // Lógica de Login/Registro
+    if (!localStorage.getItem('users')) {
+      localStorage.setItem('users', JSON.stringify([]));
+    }
+    
+    function registerUser(username, password) {
+      const users = JSON.parse(localStorage.getItem('users'));
+      const existingUser = users.find(user => user.username === username);
+      if (existingUser) {
+        alert("El usuario ya existe.");
+        return;
+      }
+      const newUser = { username, password };
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+      alert("Usuario registrado exitosamente.");
+      document.getElementById('register-container').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+      console.log("Usuarios guardados:", JSON.stringify(users, null, 2));
+    }
+    
+    function loginUser(username, password) {
+      const users = JSON.parse(localStorage.getItem('users'));
+      const user = users.find(user => user.username === username && user.password === password);
+      if (user) {
+        document.getElementById('response').style.display = 'block';
+        // Ocultar el botón de Login y mostrar el nombre de usuario en el header
+        var loginBtn = document.querySelector('.login-btn');
+        if (loginBtn) {
+          loginBtn.style.display = 'none';
+        }
+        var userInfoSpan = document.getElementById('user-info');
+        if (!userInfoSpan) {
+          userInfoSpan = document.createElement('span');
+          userInfoSpan.id = 'user-info';
+          userInfoSpan.style.position = 'absolute';
+          userInfoSpan.style.right = '20px';
+          userInfoSpan.style.top = '20px';
+          userInfoSpan.style.backgroundColor = '#f39c12';
+          userInfoSpan.style.color = '#121212';
+          userInfoSpan.style.padding = '10px 20px';
+          userInfoSpan.style.borderRadius = '3px';
+          userInfoSpan.style.fontSize = '16px';
+          document.querySelector('header').appendChild(userInfoSpan);
+        }
+        userInfoSpan.textContent = username;
+        console.log("Usuario logueado:", user);
+        setTimeout(function() {
+          showSection('inicio');
+        }, 2000);
+      } else {
+        alert("Credenciales incorrectas.");
+      }
+    }
+    
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      loginUser(username, password);
+    });
+    
+    document.getElementById('register-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const username = document.getElementById('new-username').value;
+      const password = document.getElementById('new-password').value;
+      registerUser(username, password);
+    });
+    
+    document.getElementById('registerBtn').addEventListener('click', function() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-container').style.display = 'block';
+    });
+    
+    document.getElementById('loginBtn').addEventListener('click', function() {
+      document.getElementById('register-container').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
